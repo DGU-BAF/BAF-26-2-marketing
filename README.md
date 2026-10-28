@@ -15,6 +15,9 @@
 | `outputs/v5/` | v5 그림(00~09)과 결과표 CSV, `dashboard/`는 웹 대시보드 「제주 통과형 진단」 데이터 |
 | `docs/` | 플랫폼 활용 내역표, 이해관계자 메일 초안, 발표 예상질문 대응표 |
 | `dashboard/index.html` | 웹 대시보드 페이지 원본 (데이터는 `outputs/v5/dashboard/`) |
+| `dashboard/standalone.html` | 데이터를 페이지에 넣은 공개용 대시보드. `python dashboard/build_standalone.py .`로 다시 만들고 `gh-pages` 브랜치의 `index.html`로 교체하면 갱신됨 |
+
+**공개용 대시보드**: https://dgu-baf.github.io/BAF-26-2-marketing/ (로그인 없이 열림)
 | `geo/jeju_emd.geojson` | 제주 43개 읍면동 경계 (출처는 `geo/출처.txt`) |
 | `data/` | 원본 데이터 (깃에 안 올림, 아래 목록대로 각자 넣기) |
 
