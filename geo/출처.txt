@@ -1,0 +1,5 @@
+jeju_emd.geojson — 제주특별자치도 43개 읍면동 경계
+
+원자료: 통계청 통계지리정보서비스(SGIS) 행정동 경계, 공공누리 제1유형(출처표시)
+가공본: vuski/admdongkor (https://github.com/vuski/admdongkor) ver20261001, CC BY 4.0
+처리: 전국 파일에서 sidonm=제주특별자치도 43개 피처만 추출 (형상 변경 없음)
