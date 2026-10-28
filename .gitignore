@@ -1,0 +1,11 @@
+# 원본 데이터 (제주관광빅데이터플랫폼 등에서 각자 다운로드해 data/ 에 넣기)
+data/
+
+# Python / Jupyter
+__pycache__/
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# 작업 중 스크립트 (커밋 안 함)
+_wip/
