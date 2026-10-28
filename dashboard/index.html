@@ -1,0 +1,579 @@
+<meta name="dash-one-writer">
+<style>
+  .jt { display: grid; gap: var(--cds-gap-xl); font-family: var(--font-anthropic-sans); max-width: 78rem; margin-inline: auto; }
+  .jt-head { display: grid; gap: var(--cds-gap-sm); }
+  .jt-head h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
+  .jt-take { margin: 0; color: var(--color-fg-muted); max-width: 62ch; line-height: 1.6; }
+  .jt .jt-take b, .jt .jt-tile b, .jt .jt-inline b { font-weight: 600; color: var(--color-fg); font-variant-numeric: tabular-nums; }
+  .jt-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: var(--cds-gap-md); }
+  .jt-tile, .jt-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
+  .jt-tile { display: grid; gap: var(--cds-gap-xs); align-content: start; }
+  .jt-tile .jt-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: .02em; }
+  .jt-big { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; line-height: 1.15; }
+  .jt-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: 0; line-height: 1.5; }
+  .jt-section { display: grid; gap: var(--cds-gap-md); }
+  .jt-section > h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+  .jt-section > .jt-note { max-width: 70ch; }
+  .jt-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: var(--cds-gap-md); }
+  .jt-grid-map { display: grid; grid-template-columns: minmax(0, 2fr) minmax(min(100%, 18rem), 1fr); gap: var(--cds-gap-md); }
+  @media (max-width: 52rem) { .jt-grid-map { grid-template-columns: 1fr; } }
+  .jt-card { display: grid; gap: var(--cds-gap-sm); align-content: start; }
+  .jt-card h3 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+  .jt-chart { position: relative; min-height: 18rem; }
+  .jt-map { min-height: 22rem; }
+  .jt-chart svg { display: block; overflow: visible; }
+  .jt-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; z-index: 2; }
+  .jt-tip .jt-tip-head { color: var(--cds-text-secondary); }
+  .jt-dl { display: grid; grid-template-columns: auto 1fr; gap: var(--cds-gap-xs) var(--cds-gap-md); margin: 0; font-size: var(--cds-font-size-body); }
+  .jt-dl dt { color: var(--color-fg-muted); }
+  .jt-dl dd { margin: 0; font-variant-numeric: tabular-nums; min-width: 0; }
+  .jt-pill { display: inline-block; padding: 0 var(--cds-pad-sm); border-radius: 999px; font-size: var(--cds-font-size-caption); border: 1px solid var(--color-border-line); }
+  .jt-pill-bad { color: var(--color-bad); border-color: currentColor; }
+  .jt-pill-warn { color: var(--color-warn); border-color: currentColor; }
+  .jt-pill-ok { color: var(--color-ok); border-color: currentColor; }
+  .jt-targets { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr)); gap: var(--cds-gap-md); }
+  .jt-target h3 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); }
+  .jt-actions { margin: 0; padding-left: 1.2em; display: grid; gap: var(--cds-gap-xs); line-height: 1.5; }
+  .jt-kpi { display: grid; gap: var(--cds-gap-sm); }
+  .jt-kpi-row { display: grid; gap: 4px; }
+  .jt-kpi-top { display: flex; justify-content: space-between; gap: var(--cds-gap-sm); flex-wrap: wrap; font-size: var(--cds-font-size-caption); }
+  .jt-kpi-top span:last-child { font-variant-numeric: tabular-nums; }
+  .jt-bar { height: 8px; border-radius: 4px; background: var(--cds-chart-grid); overflow: hidden; }
+  .jt-bar > i { display: block; height: 100%; border-radius: 4px; }
+  .jt-filters { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); }
+  .jt-filters button, .jt-toggle button { font: inherit; font-size: var(--cds-font-size-caption); padding: 4px 10px; border-radius: 999px; border: 1px solid var(--color-border-line); background: var(--color-bg); color: var(--color-fg); cursor: pointer; }
+  .jt-filters button[aria-pressed="true"], .jt-toggle button[aria-pressed="true"] { background: var(--color-fg); color: var(--color-bg); border-color: var(--color-fg); }
+  .jt-filters button:focus-visible, .jt-toggle button:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+  .jt-toggle { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); }
+  .jt-tablebox { max-height: 26rem; overflow: auto; }
+  .jt-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  .jt-table th { position: sticky; top: 0; background: var(--color-panel); text-align: left; font-weight: var(--cds-font-weight-medium); padding: 6px 8px; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+  .jt-table td { padding: 6px 8px; border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
+  .jt-table td.jt-n, .jt-table th.jt-n { text-align: right; }
+  @media (max-width: 40rem) { .jt-hide-narrow { display: none; } }
+  .jt-method { display: grid; gap: var(--cds-gap-sm); max-width: 72ch; font-size: var(--cds-font-size-body); line-height: 1.6; }
+  .jt-method p { margin: 0; }
+  [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+  [data-dash-source-state=empty] { color: transparent; }
+</style>
+
+<div class="jt">
+  <header class="jt-head" id="top">
+    <h1>제주 통과형 진단</h1>
+    <p class="jt-take">2023→2025년 제주 관광지의 관광객 도착은 <b data-draw="bg-arr" data-source="bg_change" data-field="변화" data-where="지표=관광지 관광객 도착">—</b>% 변했지만, 도착 1건당 카드 소비는 <b data-draw="bg-upa" data-source="bg_change" data-field="변화" data-where="지표=관광지 도착당 소비">—</b>% 변했습니다. 더 많이 오게 하기보다, 온 관광객이 근처 상권에서 소비하도록 잇는 것이 지금 필요한 처방입니다.</p>
+  </header>
+
+  <section class="jt-tiles" id="summary" aria-label="핵심 숫자">
+    <div class="jt-tile">
+      <span class="jt-label">강건한 통과형 동</span>
+      <span class="jt-big"><span data-draw="t-pass" data-source="summary" data-field="통과형동수" data-row="0">—</span>곳</span>
+      <p class="jt-note">관광 동 <span data-draw="t-tour" data-source="model" data-field="값" data-where="지표=관광 동 수">—</span>곳 중 기준을 바꿔도, 해마다 다시 나온 곳</p>
+    </div>
+    <div class="jt-tile">
+      <span class="jt-label">최종 타깃 기대 추가 소비</span>
+      <span class="jt-big">연 <span data-draw="t-lo" data-source="summary" data-field="타깃하한" data-row="0">—</span>~<span data-draw="t-hi" data-source="summary" data-field="타깃상한" data-row="0">—</span>억 원</span>
+      <p class="jt-note">한경면·송산동, 기대 소비 격차의 25~100%를 메울 때 (카드 결제 기준)</p>
+    </div>
+    <div class="jt-tile">
+      <span class="jt-label">확대 적용 후보 관광지</span>
+      <span class="jt-big"><span data-draw="t-exn" data-source="summary" data-field="확대후보수" data-row="0">—</span>곳</span>
+      <p class="jt-note">연 <b data-draw="t-exlo" data-source="summary" data-field="확대보수" data-row="0">—</b>~<b data-draw="t-exhi" data-source="summary" data-field="확대상한" data-row="0">—</b>억 원 (보수 추정 ~ 상한)</p>
+    </div>
+    <div class="jt-tile">
+      <span class="jt-label">로컬 방문 탄력성</span>
+      <span class="jt-big" data-draw="t-beta" data-source="model" data-field="값" data-where="지표=로컬 방문 탄력성">—</span>
+      <p class="jt-note">같은 동에서 로컬 소비처 방문이 늘어난 달에 카드 소비도 늘어난 정도 (동·월 고정효과 패널)</p>
+    </div>
+  </section>
+
+  <section class="jt-section" id="map">
+    <h2>어디가 통과형인가</h2>
+    <p class="jt-note">관광객은 오는데 그 규모에 비해 카드 소비가 적은 동일수록 붉게 칠했습니다. 빗금은 도민 생활 이동이 대부분인 동과 도서 지역으로, 판정에서 뺐습니다. 동을 누르면 오른쪽에 자세한 값이 나옵니다.</p>
+    <div class="jt-grid-map">
+      <div class="jt-card">
+        <h3>통과형 합의점수</h3>
+        <p class="jt-note">9가지 계산법의 평균. 0보다 크면 트래픽 대비 소비가 부족</p>
+        <div class="jt-chart jt-map" data-draw="map" data-source="boundary dongs"></div>
+      </div>
+      <div class="jt-card" id="dong-detail">
+        <h3 data-draw="detail-name" data-source="dongs" data-field="읍면동명">—</h3>
+        <div data-draw="detail" data-source="dongs">—</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="jt-section" id="targets">
+    <h2>최종 타깃 처방</h2>
+    <p class="jt-note">강건한 통과형 가운데 분석에 쓰지 않은 2026년 상반기에도 상위권을 지킨 두 곳입니다. KPI는 매달 같은 방식으로 다시 계산해 추적합니다.</p>
+    <div class="jt-targets" data-draw="targets" data-source="actions kpi">—</div>
+  </section>
+
+  <section class="jt-section" id="spots">
+    <h2>관광지 단위 진단</h2>
+    <p class="jt-note">마을 관광 수요의 절반 이상을 혼자 끌어오는 관광지를 비교했습니다. 로컬전환비는 관광지 도착 대비 같은 마을 식당·카페·로드샵 도착의 비율이고, 소비처 밀도는 관광지 도착 1만 건당 로컬 소비처 수입니다.</p>
+    <div class="jt-grid">
+      <div class="jt-card">
+        <h3>공급 부족과 연결 부족</h3>
+        <p class="jt-note">왼쪽 아래는 가게가 적은 곳, 오른쪽 아래는 가게는 있는데 이어지지 않는 곳. 점선은 중앙값, 점 크기는 관광객 도착</p>
+        <div class="jt-chart" data-draw="scatter" data-source="spots"></div>
+      </div>
+      <div class="jt-card">
+        <h3>관광지 목록</h3>
+        <div class="jt-filters" role="group" aria-label="진단으로 거르기">
+          <button type="button" class="jt-f" data-f="전체" aria-pressed="true">전체</button>
+          <button type="button" class="jt-f" data-f="확대 후보" aria-pressed="false">확대 후보</button>
+          <button type="button" class="jt-f" data-f="공급 부족" aria-pressed="false">공급 부족</button>
+          <button type="button" class="jt-f" data-f="연결 부족" aria-pressed="false">연결 부족</button>
+          <button type="button" class="jt-f" data-f="전환 양호" aria-pressed="false">전환 양호</button>
+        </div>
+        <div class="jt-tablebox">
+          <table class="jt-table" data-source="spots" data-row-key="스팟ID">
+            <thead>
+              <tr>
+                <th data-field="목적지명">관광지</th>
+                <th data-field="스팟종류" class="jt-hide-narrow">종류</th>
+                <th data-field="읍면동명">동</th>
+                <th data-field="관광객도착" class="jt-n">관광객 도착</th>
+                <th data-field="로컬전환비" class="jt-n">로컬전환비</th>
+                <th data-field="로컬밀도" class="jt-n jt-hide-narrow">소비처 밀도</th>
+                <th data-field="진단">진단</th>
+                <th data-field="인접 상권(2km)" class="jt-hide-narrow">인접 상권</th>
+                <th data-field="비고">비고</th>
+              </tr>
+            </thead>
+            <tbody data-draw="spot-rows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="jt-section" id="monitor">
+    <h2>월별 모니터링</h2>
+    <p class="jt-note">타깃과 벤치마킹 동의 로컬전환비를 같은 축에 그렸습니다. 처방을 시작한 뒤 타깃 선이 벤치마킹 선에 다가가는지가 성과 지표입니다.</p>
+    <div class="jt-card">
+      <div class="jt-toggle" role="group" aria-label="타깃 고르기">
+        <button type="button" class="jt-m" data-m="0" aria-pressed="true">첫 번째 타깃</button>
+        <button type="button" class="jt-m" data-m="1" aria-pressed="false">두 번째 타깃</button>
+      </div>
+      <h3 data-draw="mon-title" data-source="actions">—</h3>
+      <div class="jt-chart" data-draw="monthly" data-source="monthly actions"></div>
+    </div>
+  </section>
+
+  <section class="jt-section" id="method">
+    <h2>방법과 출처</h2>
+    <div class="jt-method">
+      <p><b>통과형 판정.</b> 트래픽 3종(티맵 차량 도착, 티맵 관광지 관광객 도착, SKT 관광객 방문)과 계산법 3종(로그 회귀잔차, 로그 Z 차이, 백분위 순위 차이)을 곱한 9개 정의의 평균을 합의점수로 썼습니다. 소비는 관광객 카드 소비에서 숙박업을 뺐습니다. 숙박비는 온라인 선결제가 많아 동마다 잡히는 정도가 다르기 때문입니다.</p>
+      <p><b>강건성.</b> 기준을 8가지로 바꿔도 과반에서 선정되고, 2023·2024·2025년 모두 상위권인 동만 통과형으로 봤습니다. 분석에 쓰지 않은 2026년 상반기 데이터로 다시 확인했습니다.</p>
+      <p><b>관광 환경 유형.</b> 소비와 트래픽은 빼고 공급규모(관광지·로컬 소비처·숙박시설 수)와 자연·체험 목적지 비중만으로 군집을 나눈 뒤, 같은 유형 안에서 타깃과 벤치마킹 동을 골랐습니다.</p>
+      <p><b>인접 상권.</b> 인기장소 데이터에 좌표가 없어, 전국주차장정보표준데이터의 주차장 위경도를 마을별로 평균 내 마을 위치로 썼습니다.</p>
+      <p class="jt-note">데이터: 제주관광빅데이터플랫폼(지역별 차량 도착 수, 지역별 방문객, 지역별 소비, 지역별 인기 장소), 공공데이터포털 전국주차장정보표준데이터. 경계: 통계청 SGIS 행정동 경계(공공누리 제1유형), vuski/admdongkor 가공본(CC BY 4.0). 분석 기간 2023.01~2025.12, 검증 기간 2026.01~06. 금액은 카드 결제 기준이라 실제 지역 매출보다 작을 수 있습니다.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+  window.jt = window.jt || {};
+  jt.n = (v) => (v === '' || v == null ? NaN : Number(v));
+  jt.css = (name) => getComputedStyle(document.getElementById('dash-root') || document.body).getPropertyValue(name).trim();
+  jt.f2 = d3.format('.2f');
+  jt.f1 = d3.format('.1f');
+  jt.f0 = d3.format(',.0f');
+  jt.sel = jt.sel || '';
+  jt.filter = jt.filter || '전체';
+  jt.mon = jt.mon || 0;
+  jt.where = (obj) => Object.entries(obj).map(([k, v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v)).join('&');
+  jt.mark = (el, source, field, where) => {
+    el.setAttribute('data-source', source);
+    el.setAttribute('data-field', field);
+    if (where) el.setAttribute('data-where', jt.where(where));
+    return el;
+  };
+  jt.tip = (box) => {
+    let t = box.querySelector(':scope > .jt-tip');
+    if (!t) { t = document.createElement('div'); t.className = 'jt-tip'; t.hidden = true; box.appendChild(t); }
+    return t;
+  };
+  jt.showTip = (box, tip, event, head, lines) => {
+    tip.replaceChildren();
+    const h = document.createElement('div'); h.className = 'jt-tip-head'; h.textContent = head; tip.appendChild(h);
+    lines.forEach((l) => { const d = document.createElement('div'); d.textContent = l; tip.appendChild(d); });
+    tip.hidden = false;
+    const r = box.getBoundingClientRect();
+    let x = event.clientX - r.left + 12, y = event.clientY - r.top + 12;
+    const w = tip.offsetWidth, hgt = tip.offsetHeight;
+    if (x + w > r.width) x = Math.max(0, event.clientX - r.left - w - 12);
+    if (y + hgt > r.height) y = Math.max(0, event.clientY - r.top - hgt - 12);
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  };
+  jt.empty = (el) => { el.replaceChildren(); el.textContent = '—'; };
+  jt.biggest = (rings) => rings.reduce((a, b) => (b.length > a.length ? b : a), rings[0]);
+  jt.center = (ring) => [ring.reduce((s, p) => s + p[0], 0) / ring.length, ring.reduce((s, p) => s + p[1], 0) / ring.length];
+  jt.month = (s) => { const [y, m] = String(s).split('-').map(Number); return new Date(Date.UTC(y, m - 1, 1)); };
+  // 라벨이 겹치면 아래로 밀어 냄 (최대 8번)
+  jt.declutter = (nodes, step = 12) => {
+    const placed = [];
+    const hit = (a, b) => a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
+    nodes.forEach((n) => {
+      for (let i = 0; i < 8; i++) {
+        const bb = n.getBBox();
+        if (!placed.some((p) => hit(bb, p))) { placed.push(bb); return; }
+        n.setAttribute('y', Number(n.getAttribute('y')) + step);
+      }
+      placed.push(n.getBBox());
+    });
+  };
+  jt.ym = (d) => `${d.getUTCFullYear()}.${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
+</script>
+
+<script>
+  dash.calc('bg_change', {
+    inputs: ['background'],
+    title: '2023→2025 변화율',
+    description: '관광지 관광객 도착과 관광지 도착 1건당 소비의 2023년 대비 2025년 변화(%)',
+    fn: (background) => {
+      const rows = background.map((d) => ({ y: Number(d['연도']), a: Number(d['관광지_관광객도착']), u: Number(d['관광지도착당_소비']) })).sort((p, q) => p.y - q.y);
+      const first = rows[0], last = rows[rows.length - 1];
+      return [
+        { 지표: '관광지 관광객 도착', 변화: Math.round((last.a / first.a - 1) * 1000) / 10 },
+        { 지표: '관광지 도착당 소비', 변화: Math.round((last.u / first.u - 1) * 1000) / 10 },
+      ];
+    },
+  });
+  dash.calc('summary', {
+    inputs: ['dongs', 'actions', 'spots'],
+    title: '핵심 숫자 합계',
+    description: '통과형 동 수, 최종 타깃 기대 추가 소비 합, 확대 후보 관광지 수와 효과 합',
+    fn: (dongs, actions, spots) => {
+      const sum = (rows, k) => rows.reduce((s, d) => s + (Number(d[k]) || 0), 0);
+      const ex = spots.filter((d) => d['비고'] === '확대 후보');
+      return [{
+        통과형동수: dongs.filter((d) => d['통과형'] === 'True').length,
+        타깃하한: Math.round(sum(actions, '기대소비_하한')),
+        타깃상한: Math.round(sum(actions, '기대소비_상한')),
+        확대후보수: ex.length,
+        확대보수: Math.round(sum(ex, '연 추가 소비_보수(억원)')),
+        확대상한: Math.round(sum(ex, '연 추가 소비_상한(억원)')),
+      }];
+    },
+  });
+
+  const pick = (id, pred) => { const g = dash.data(id); return g.status === 'ok' ? g.data.find(pred) : null; };
+  const signed = (v) => (v > 0 ? '+' : '') + jt.f1(v);
+  dash.draw('bg-arr', (el) => { const r = pick('bg_change', (d) => d['지표'] === '관광지 관광객 도착'); el.textContent = r ? signed(r['변화']) : '—'; });
+  dash.draw('bg-upa', (el) => { const r = pick('bg_change', (d) => d['지표'] === '관광지 도착당 소비'); el.textContent = r ? signed(r['변화']) : '—'; });
+  const sumField = (f) => (el) => { const r = pick('summary', () => true); el.textContent = r ? jt.f0(r[f]) : '—'; };
+  dash.draw('t-pass', sumField('통과형동수'));
+  dash.draw('t-lo', sumField('타깃하한'));
+  dash.draw('t-hi', sumField('타깃상한'));
+  dash.draw('t-exn', sumField('확대후보수'));
+  dash.draw('t-exlo', sumField('확대보수'));
+  dash.draw('t-exhi', sumField('확대상한'));
+  dash.draw('t-tour', (el) => { const r = pick('model', (d) => d['지표'] === '관광 동 수'); el.textContent = r ? jt.f0(jt.n(r['값'])) : '—'; });
+  dash.draw('t-beta', (el) => { const r = pick('model', (d) => d['지표'] === '로컬 방문 탄력성'); el.textContent = r ? d3.format('.3~f')(jt.n(r['값'])) : '—'; });
+</script>
+
+<script>
+  // 지도: 경위도를 위도 33.4도 기준 등거리 투영으로 그림 (추자면은 본섬과 멀어 범위에서 뺌)
+  dash.draw('map', (el) => {
+    const b = dash.data('boundary'), d = dash.data('dongs');
+    if (b.status !== 'ok' || d.status !== 'ok') return jt.empty(el);
+    const info = new Map(d.data.map((r) => [r['읍면동명'], r]));
+    if (!jt.sel) { const t0 = d.data.find((r) => r['역할'] === '최종 타깃'); jt.sel = t0 ? t0['읍면동명'] : d.data[0]['읍면동명']; }
+    const shapes = b.data.map((r) => ({ name: r['읍면동명'], rings: JSON.parse(r['rings']) }));
+    const pts = shapes.filter((s) => s.name !== '추자면').flatMap((s) => s.rings.flat());
+    const cosLat = Math.cos(33.4 * Math.PI / 180);
+    const [x0, x1] = d3.extent(pts, (p) => p[0]), [y0, y1] = d3.extent(pts, (p) => p[1]);
+    const W = el.clientWidth || 600, k = (W - 8) / ((x1 - x0) * cosLat), H = Math.round((y1 - y0) * k + 8);
+    const px = (p) => [4 + (p[0] - x0) * cosLat * k, 4 + (y1 - p[1]) * k];
+    const path = (rings) => rings.map((ring) => 'M' + ring.map((p) => px(p).map((v) => v.toFixed(1)).join(',')).join('L') + 'Z').join('');
+    const neg = dash.colors[0], pos = jt.css('--color-bad') || '#c0392b', mid = jt.css('--color-panel') || '#eee';
+    const tour = d.data.filter((r) => r['구분'] === '관광 동').map((r) => Math.abs(jt.n(r['합의점수'])));
+    const lim = d3.max(tour) || 1;
+    const color = (r) => {
+      if (!r || r['구분'] !== '관광 동') return 'transparent';
+      const v = jt.n(r['합의점수']);
+      return v >= 0 ? d3.interpolateRgb(mid, pos)(Math.min(1, v / lim)) : d3.interpolateRgb(mid, neg)(Math.min(1, -v / lim));
+    };
+    el.replaceChildren();
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', '제주 읍면동 통과형 합의점수 지도');
+    const defs = svg.append('defs');
+    defs.append('pattern').attr('id', 'jt-hatch').attr('width', 6).attr('height', 6).attr('patternUnits', 'userSpaceOnUse').attr('patternTransform', 'rotate(45)')
+      .append('line').attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', 6).attr('stroke', 'var(--cds-chart-muted)').attr('stroke-width', 1.5);
+    const tip = jt.tip(el);
+    const shown = shapes.filter((s) => s.name !== '추자면');
+    svg.append('g').selectAll('path').data(shown).join('path')
+      .attr('d', (s) => path(s.rings))
+      .attr('fill', (s) => (info.get(s.name)?.['구분'] === '관광 동' ? color(info.get(s.name)) : 'url(#jt-hatch)'))
+      .attr('stroke', (s) => (s.name === jt.sel ? 'var(--color-fg)' : 'var(--color-border-line)'))
+      .attr('stroke-width', (s) => (s.name === jt.sel ? 2.2 : info.get(s.name)?.['역할'] !== '-' ? 1.4 : 0.6))
+      .style('cursor', 'pointer')
+      .on('click', (event, s) => { jt.sel = s.name; dash.draw('map'); dash.draw('detail'); dash.draw('detail-name'); })
+      .on('mousemove', (event, s) => {
+        const r = info.get(s.name);
+        const lines = r && r['구분'] === '관광 동' ? [`합의점수 ${jt.f2(jt.n(r['합의점수']))}`, r['유형']] : [r ? r['구분'] : ''];
+        if (r && r['역할'] !== '-') lines.push(r['역할']);
+        jt.showTip(el, tip, event, s.name, lines);
+      })
+      .on('mouseleave', () => { tip.hidden = true; });
+    const labelled = shown.filter((s) => (info.get(s.name)?.['역할'] ?? '-') !== '-');
+    svg.append('g').selectAll('text').data(labelled).join('text')
+      .attr('x', (s) => px(jt.center(jt.biggest(s.rings)))[0])
+      .attr('y', (s) => px(jt.center(jt.biggest(s.rings)))[1])
+      .attr('text-anchor', 'middle').attr('dominant-baseline', 'middle')
+      .attr('font-size', 11).attr('font-weight', 600).attr('fill', 'var(--color-fg)')
+      .attr('paint-order', 'stroke').attr('stroke', 'var(--color-panel)').attr('stroke-width', 3)
+      .style('pointer-events', 'none')
+      .text((s) => s.name);
+    jt.declutter(svg.selectAll('g text').nodes().filter((n) => n.closest('g') && !n.closest('g').getAttribute('transform')));
+    // 범례
+    const lg = svg.append('g').attr('transform', `translate(${W - 168},${H - 26})`);
+    const gid = 'jt-grad';
+    const grad = defs.append('linearGradient').attr('id', gid);
+    [[0, neg], [0.5, mid], [1, pos]].forEach(([o, c]) => grad.append('stop').attr('offset', o).attr('stop-color', c));
+    lg.append('rect').attr('width', 120).attr('height', 8).attr('rx', 2).attr('fill', `url(#${gid})`);
+    lg.append('text').attr('x', 0).attr('y', 20).attr('font-size', 10).attr('fill', 'var(--color-fg-muted)').text('소비 충분');
+    lg.append('text').attr('x', 120).attr('y', 20).attr('text-anchor', 'end').attr('font-size', 10).attr('fill', 'var(--color-fg-muted)').text('소비 부족');
+    el.style.minHeight = H + 'px';
+  });
+
+  dash.draw('detail-name', (el) => {
+    const d = dash.data('dongs');
+    if (d.status !== 'ok' || !jt.sel) { el.textContent = '—'; return; }
+    el.textContent = jt.sel;
+    el.setAttribute('data-where', jt.where({ 읍면동명: jt.sel }));
+  });
+
+  dash.draw('detail', (el) => {
+    const d = dash.data('dongs');
+    if (d.status !== 'ok' || !jt.sel) return jt.empty(el);
+    const r = d.data.find((x) => x['읍면동명'] === jt.sel);
+    if (!r) return jt.empty(el);
+    const w = { 읍면동명: jt.sel };
+    el.replaceChildren();
+    const dl = document.createElement('dl'); dl.className = 'jt-dl';
+    const row = (label, field, fmt, cls) => {
+      const dt = document.createElement('dt'); dt.textContent = label;
+      const dd = document.createElement('dd');
+      const s = jt.mark(document.createElement('span'), 'dongs', field, w);
+      const v = r[field];
+      s.textContent = fmt ? fmt(v) : v;
+      if (cls) s.className = cls;
+      dd.appendChild(s); dl.append(dt, dd);
+    };
+    row('시', '시');
+    row('구분', '구분');
+    if (r['구분'] === '관광 동') {
+      row('관광 환경 유형', '유형');
+      row('합의점수', '합의점수', (v) => jt.f2(jt.n(v)));
+      row('연도별 순위 2023', '연도순위_2023', (v) => jt.f0(jt.n(v)) + '위');
+      row('연도별 순위 2024', '연도순위_2024', (v) => jt.f0(jt.n(v)) + '위');
+      row('연도별 순위 2025', '연도순위_2025', (v) => jt.f0(jt.n(v)) + '위');
+      row('2026 상반기 검증 순위', '검증순위_2026H1', (v) => jt.f0(jt.n(v)) + '위');
+      row('로컬전환비', '로컬전환비', (v) => jt.f2(jt.n(v)));
+      row('관광객 비중', '관광객비중', (v) => d3.format('.1%')(jt.n(v)));
+      if (r['역할'] !== '-') row('역할', '역할', null, r['역할'] === '최종 타깃' ? 'jt-pill jt-pill-bad' : r['역할'] === '모니터링' ? 'jt-pill jt-pill-warn' : 'jt-pill jt-pill-ok');
+    } else {
+      row('관광객 비중', '관광객비중', (v) => d3.format('.1%')(jt.n(v)));
+      const p = document.createElement('p'); p.className = 'jt-note';
+      p.textContent = '도민 생활 이동이 대부분이거나 배로 들어오는 도서 지역이라 통과형 판정에서 뺐습니다.';
+      el.append(dl, p);
+      return;
+    }
+    el.appendChild(dl);
+  });
+</script>
+
+<script>
+  dash.draw('targets', (el) => {
+    const a = dash.data('actions'), k = dash.data('kpi');
+    if (a.status !== 'ok' || k.status !== 'ok') return jt.empty(el);
+    el.replaceChildren();
+    a.data.forEach((r) => {
+      const name = r['타깃'], w = { 타깃: name };
+      const card = document.createElement('article'); card.className = 'jt-card jt-target';
+      const h = jt.mark(document.createElement('h3'), 'actions', '타깃', w); h.textContent = name;
+      const sub = document.createElement('p'); sub.className = 'jt-note';
+      const ty = jt.mark(document.createElement('span'), 'actions', '유형', w); ty.textContent = r['유형'];
+      const bm = jt.mark(document.createElement('span'), 'actions', '벤치마킹', w); bm.textContent = r['벤치마킹'];
+      sub.append(ty, document.createTextNode(' · 벤치마킹 동 '), bm);
+      const dl = document.createElement('dl'); dl.className = 'jt-dl';
+      [['핵심 관광지', '핵심 스팟·진단'], ['같은 종류 벤치마킹', '스팟 벤치마킹(같은 종류)'], ['새는 업종', '새는 업종'], ['집중 시기', '취약 시기']].forEach(([label, f]) => {
+        const dt = document.createElement('dt'); dt.textContent = label;
+        const dd = document.createElement('dd'); const s = jt.mark(document.createElement('span'), 'actions', f, w); s.textContent = r[f]; dd.appendChild(s);
+        dl.append(dt, dd);
+      });
+      const ah = document.createElement('div'); ah.className = 'jt-note'; ah.textContent = '제안 액션';
+      const ol = jt.mark(document.createElement('ol'), 'actions', '제안 액션', w); ol.className = 'jt-actions';
+      String(r['제안 액션']).split(' / ').forEach((t) => { const li = document.createElement('li'); li.textContent = t; ol.appendChild(li); });
+      const kh = document.createElement('div'); kh.className = 'jt-note'; kh.textContent = 'KPI (2025 → 목표)';
+      const kpi = document.createElement('div'); kpi.className = 'jt-kpi';
+      k.data.filter((x) => x['타깃'] === name).forEach((x) => {
+        const kw = { 타깃: name, 지표: x['지표'] };
+        const cur = jt.n(x['현재']), goal = jt.n(x['목표']);
+        const won = x['지표'].includes('천원');
+        const fmt = won ? jt.f0 : jt.f2;
+        const rowEl = document.createElement('div'); rowEl.className = 'jt-kpi-row';
+        const top = document.createElement('div'); top.className = 'jt-kpi-top';
+        const lab = document.createElement('span'); lab.textContent = x['지표'];
+        const val = document.createElement('span');
+        const c = jt.mark(document.createElement('b'), 'kpi', '현재', kw); c.textContent = fmt(cur);
+        const g = jt.mark(document.createElement('b'), 'kpi', '목표', kw); g.textContent = fmt(goal);
+        const basis = jt.mark(document.createElement('span'), 'kpi', '기준', kw); basis.textContent = x['기준'];
+        val.append(c, document.createTextNode(' → '), g, document.createTextNode(' · '), basis);
+        top.append(lab, val);
+        const bar = document.createElement('div'); bar.className = 'jt-bar';
+        const fill = document.createElement('i'); fill.style.width = Math.max(2, Math.min(100, (cur / goal) * 100)) + '%'; fill.style.background = dash.colors[0];
+        bar.appendChild(fill);
+        rowEl.append(top, bar); kpi.appendChild(rowEl);
+      });
+      const eff = document.createElement('p'); eff.className = 'jt-inline';
+      const lo = jt.mark(document.createElement('b'), 'actions', '기대소비_하한', w); lo.textContent = jt.f0(jt.n(r['기대소비_하한']));
+      const hi = jt.mark(document.createElement('b'), 'actions', '기대소비_상한', w); hi.textContent = jt.f0(jt.n(r['기대소비_상한']));
+      eff.append(document.createTextNode('기대 추가 소비 연 '), lo, document.createTextNode('~'), hi, document.createTextNode('억 원 (카드 결제 기준)'));
+      card.append(h, sub, dl, ah, ol, kh, kpi, eff);
+      el.appendChild(card);
+    });
+  });
+</script>
+
+<script>
+  dash.draw('scatter', (el) => {
+    const s = dash.data('spots');
+    if (s.status !== 'ok') return jt.empty(el);
+    const rows = s.data.map((r) => ({ ...r, x: Math.max(0.1, jt.n(r['로컬밀도'])), y: Math.max(0.005, jt.n(r['로컬전환비'])), n: jt.n(r['관광객도착']) }));
+    const W = el.clientWidth || 500, H = Math.max(300, Math.min(420, W * 0.7));
+    const m = { t: 10, r: 16, b: 40, l: 48 };
+    const x = d3.scaleLog([0.1, d3.max(rows, (d) => d.x) * 1.2], [m.l, W - m.r]);
+    const y = d3.scaleLog([0.004, d3.max(rows, (d) => d.y) * 1.5], [H - m.b, m.t]);
+    const rr = d3.scaleSqrt([0, d3.max(rows, (d) => d.n)], [2, 14]);
+    const types = Array.from(new Set(rows.map((d) => d['스팟종류'])));
+    const col = (t) => dash.colors[types.indexOf(t) % dash.colors.length];
+    el.replaceChildren();
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', '관광지 소비처 밀도와 로컬전환비 산점도');
+    const fmt = (v) => d3.format('~g')(v);
+    const gx = svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(5, fmt)).attr('font-size', null).attr('font-family', null);
+    const gy = svg.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5, fmt)).attr('font-size', null).attr('font-family', null);
+    [gx, gy].forEach((g) => { g.selectAll('text').attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)'); g.selectAll('line,path').attr('stroke', 'var(--cds-chart-axis)'); });
+    svg.append('text').attr('x', (m.l + W - m.r) / 2).attr('y', H - 6).attr('text-anchor', 'middle').attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)').text('소비처 밀도 (관광지 도착 1만 건당, log)');
+    svg.append('text').attr('transform', `translate(12,${(m.t + H - m.b) / 2}) rotate(-90)`).attr('text-anchor', 'middle').attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)').text('로컬전환비 (log)');
+    const mx = d3.median(rows, (d) => d.x), my = d3.median(rows, (d) => d.y);
+    svg.append('line').attr('x1', x(mx)).attr('x2', x(mx)).attr('y1', m.t).attr('y2', H - m.b).attr('stroke', 'var(--cds-chart-reference)').attr('stroke-dasharray', '4 3');
+    svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(my)).attr('y2', y(my)).attr('stroke', 'var(--cds-chart-reference)').attr('stroke-dasharray', '4 3');
+    const tip = jt.tip(el);
+    svg.append('g').selectAll('circle').data(rows.sort((p, q) => q.n - p.n)).join('circle')
+      .attr('cx', (d) => x(d.x)).attr('cy', (d) => y(d.y)).attr('r', (d) => rr(d.n))
+      .attr('fill', (d) => col(d['스팟종류'])).attr('fill-opacity', 0.7)
+      .attr('stroke', (d) => (d['비고'] === '최종 타깃' ? 'var(--color-fg)' : d['비고'] === '확대 후보' ? 'var(--color-bad)' : 'var(--color-panel)'))
+      .attr('stroke-width', (d) => (d['비고'] === '-' ? 1 : 2.2))
+      .on('mousemove', (event, d) => jt.showTip(el, tip, event, `${d['목적지명']} · ${d['읍면동명']}`, [d['스팟종류'], `로컬전환비 ${jt.f2(jt.n(d['로컬전환비']))}`, `소비처 밀도 ${jt.f1(jt.n(d['로컬밀도']))}`, `관광객 도착 ${jt.f0(d.n)}`, d['진단']]))
+      .on('mouseleave', () => { tip.hidden = true; });
+    const lab = rows.filter((d) => d['비고'] === '최종 타깃' || d['비고'] === '확대 후보');
+    svg.append('g').selectAll('text').data(lab).join('text')
+      .attr('x', (d) => x(d.x) + rr(d.n) + 3).attr('y', (d) => y(d.y) + 4)
+      .attr('fill', 'var(--color-fg)').style('font-size', 'var(--cds-font-size-caption)')
+      .attr('class', 'jt-slab')
+      .attr('font-weight', (d) => (d['비고'] === '최종 타깃' ? 600 : 400))
+      .attr('paint-order', 'stroke').attr('stroke', 'var(--color-panel)').attr('stroke-width', 3)
+      .text((d) => d['목적지명']);
+    jt.declutter(svg.selectAll('.jt-slab').nodes());
+    const leg = svg.append('g').attr('transform', `translate(${m.l + 8},${m.t + 4})`);
+    types.forEach((t, i) => {
+      const g = leg.append('g').attr('transform', `translate(0,${i * 15})`);
+      g.append('circle').attr('r', 4).attr('cx', 4).attr('cy', 0).attr('fill', col(t));
+      g.append('text').attr('x', 12).attr('y', 4).attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)').text(t);
+    });
+    el.style.minHeight = H + 'px';
+  });
+
+  dash.draw('spot-rows', (tb) => {
+    const s = dash.data('spots');
+    tb.replaceChildren();
+    if (s.status !== 'ok') return;
+    const f = jt.filter;
+    const rows = s.data.filter((r) => f === '전체' || (f === '확대 후보' ? r['비고'] === '확대 후보' : r['진단'] === f))
+      .sort((p, q) => jt.n(q['관광객도착']) - jt.n(p['관광객도착']));
+    rows.forEach((r) => {
+      const tr = document.createElement('tr'); tr.setAttribute('data-key', r['스팟ID']);
+      const cell = (txt, cls) => { const td = document.createElement('td'); td.textContent = txt; if (cls) td.className = cls; tr.appendChild(td); };
+      cell(r['목적지명']);
+      cell(r['스팟종류'], 'jt-hide-narrow');
+      cell(r['읍면동명']);
+      cell(jt.f0(jt.n(r['관광객도착'])), 'jt-n');
+      cell(jt.f2(jt.n(r['로컬전환비'])), 'jt-n');
+      cell(jt.f1(jt.n(r['로컬밀도'])), 'jt-n jt-hide-narrow');
+      cell(r['진단']);
+      cell(r['인접 상권(2km)'] || '', 'jt-hide-narrow');
+      cell(r['비고']);
+      tb.appendChild(tr);
+    });
+  });
+
+  document.querySelectorAll('.jt-f').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      jt.filter = btn.dataset.f;
+      document.querySelectorAll('.jt-f').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      dash.draw('spot-rows');
+    });
+  });
+</script>
+
+<script>
+  const monPair = () => {
+    const a = dash.data('actions');
+    if (a.status !== 'ok' || !a.data[jt.mon]) return null;
+    return { tgt: a.data[jt.mon]['타깃'], bm: a.data[jt.mon]['벤치마킹'] };
+  };
+  dash.draw('mon-title', (el) => {
+    const p = monPair();
+    el.textContent = p ? `${p.tgt}와 벤치마킹 ${p.bm}의 월별 로컬전환비` : '—';
+  });
+  dash.draw('monthly', (el) => {
+    const g = dash.data('monthly'), p = monPair();
+    if (g.status !== 'ok' || !p) return jt.empty(el);
+    const series = [p.tgt, p.bm].map((name, i) => ({
+      name, color: i === 0 ? dash.colors[0] : 'var(--cds-chart-muted)',
+      pts: g.data.filter((r) => r['읍면동명'] === name).map((r) => ({ t: jt.month(r['월']), v: jt.n(r['로컬전환비']) })).filter((d) => d.t && isFinite(d.v)).sort((a, b) => a.t - b.t),
+    }));
+    const all = series.flatMap((s) => s.pts);
+    if (!all.length) return jt.empty(el);
+    const W = el.clientWidth || 600, H = 280, m = { t: 12, r: 70, b: 28, l: 40 };
+    const x = d3.scaleUtc(d3.extent(all, (d) => d.t), [m.l, W - m.r]);
+    const y = d3.scaleLinear([0, d3.max(all, (d) => d.v) * 1.1], [H - m.b, m.t]).nice();
+    el.replaceChildren();
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', '월별 로컬전환비');
+    svg.append('g').selectAll('line').data(y.ticks(4)).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y).attr('y2', y).attr('stroke', 'var(--cds-chart-grid)');
+    const gx = svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(Math.max(3, Math.floor(W / 110))).tickFormat(jt.ym)).attr('font-size', null).attr('font-family', null);
+    const gy = svg.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(d3.format('.1f'))).attr('font-size', null).attr('font-family', null);
+    [gx, gy].forEach((ax) => { ax.selectAll('text').attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)'); ax.selectAll('line,path').attr('stroke', 'var(--cds-chart-axis)'); });
+    gy.select('.domain').remove();
+    const line = d3.line().x((d) => x(d.t)).y((d) => y(d.v));
+    series.forEach((s) => {
+      svg.append('path').datum(s.pts).attr('d', line).attr('fill', 'none').attr('stroke', s.color).attr('stroke-width', 2).attr('stroke-linecap', 'round').attr('stroke-linejoin', 'round');
+      const last = s.pts[s.pts.length - 1];
+      svg.append('circle').attr('cx', x(last.t)).attr('cy', y(last.v)).attr('r', 3).attr('fill', s.color);
+      svg.append('text').attr('class', 'jt-mlab').attr('x', x(last.t) + 6).attr('y', y(last.v) + 4).attr('fill', 'var(--color-fg)').style('font-size', 'var(--cds-font-size-caption)').text(s.name);
+    });
+    jt.declutter(svg.selectAll('.jt-mlab').nodes(), 13);
+    const tip = jt.tip(el);
+    const dot = svg.append('circle').attr('r', 4).attr('fill', dash.colors[0]).attr('opacity', 0);
+    svg.append('rect').attr('x', m.l).attr('y', m.t).attr('width', W - m.l - m.r).attr('height', H - m.t - m.b).attr('fill', 'transparent')
+      .on('mousemove', (event) => {
+        const t = x.invert(d3.pointer(event)[0]);
+        const d0 = series[0].pts.reduce((a, b) => (Math.abs(b.t - t) < Math.abs(a.t - t) ? b : a), series[0].pts[0]); if (!d0) return;
+        const o = series[1].pts.find((d) => +d.t === +d0.t);
+        dot.attr('cx', x(d0.t)).attr('cy', y(d0.v)).attr('opacity', 1);
+        jt.showTip(el, tip, event, `${d0.t.getUTCFullYear()}년 ${d0.t.getUTCMonth() + 1}월`, [`${series[0].name} ${jt.f2(d0.v)}`, o ? `${series[1].name} ${jt.f2(o.v)}` : '']);
+      })
+      .on('mouseleave', () => { tip.hidden = true; dot.attr('opacity', 0); });
+    el.style.minHeight = H + 'px';
+  });
+  document.querySelectorAll('.jt-m').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      jt.mon = Number(btn.dataset.m);
+      document.querySelectorAll('.jt-m').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      dash.draw('mon-title'); dash.draw('monthly');
+    });
+  });
+</script>
